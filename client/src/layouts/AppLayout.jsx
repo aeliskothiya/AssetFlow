@@ -28,17 +28,17 @@ export function AppLayout() {
 
           <nav className="space-y-2">
             {[
-              { to: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
-              { to: '/assets', label: 'Asset Registration', icon: CubeIcon },
-              { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon },
-              { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon },
-              { to: '/transfers', label: 'Transfers', icon: ArrowRightOnRectangleIcon },
-              { to: '/maintenance', label: 'Maintenance', icon: WrenchScrewdriverIcon },
-              { to: '/audits', label: 'Audits', icon: ShieldCheckIcon },
-              { to: '/reports', label: 'Reports', icon: DocumentTextIcon },
-              { to: '/activity-logs', label: 'Activity Logs', icon: QueueListIcon },
-              { to: '/organization-setup', label: 'Organization Setup', icon: ClipboardDocumentListIcon },
-            ].map(({ to, label, icon: Icon }) => (
+              { to: '/dashboard', label: 'Dashboard', icon: ChartBarIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/assets', label: 'Asset Registration', icon: CubeIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/transfers', label: 'Transfers', icon: ArrowRightOnRectangleIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/maintenance', label: 'Maintenance', icon: WrenchScrewdriverIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/audits', label: 'Audits', icon: ShieldCheckIcon, roles: ['Admin', 'Asset Manager'] },
+              { to: '/reports', label: 'Reports', icon: DocumentTextIcon, roles: ['Admin', 'Asset Manager', 'Department Head'] },
+              { to: '/activity-logs', label: 'Activity Logs', icon: QueueListIcon, roles: ['Admin'] },
+              { to: '/organization-setup', label: 'Organization Setup', icon: ClipboardDocumentListIcon, roles: ['Admin'] },
+            ].filter(link => !link.roles || link.roles.includes(user?.role || 'Employee')).map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}

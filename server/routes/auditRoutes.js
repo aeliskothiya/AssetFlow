@@ -26,9 +26,9 @@ router.get('/', validateRequest(auditCycleListSchema), list);
 router.get('/:cycleId', validateRequest(auditCycleIdSchema), details);
 router.get('/:cycleId/records', validateRequest(auditCycleIdSchema), listCycleRecords);
 router.get('/:cycleId/export/pdf', validateRequest(auditCycleIdSchema), exportPdf);
-router.post('/', restrictTo('Admin', 'Asset Manager'), validateRequest(auditCycleCreateSchema), create);
-router.patch('/:cycleId', restrictTo('Admin', 'Asset Manager'), validateRequest(auditCycleUpdateSchema), update);
-router.delete('/:cycleId', restrictTo('Admin', 'Asset Manager'), validateRequest(auditCycleIdSchema), remove);
+router.post('/', restrictTo('Admin'), validateRequest(auditCycleCreateSchema), create);
+router.patch('/:cycleId', restrictTo('Admin'), validateRequest(auditCycleUpdateSchema), update);
+router.delete('/:cycleId', restrictTo('Admin'), validateRequest(auditCycleIdSchema), remove);
 router.post('/:cycleId/records', restrictTo('Admin', 'Asset Manager', 'Department Head'), validateRequest(auditRecordCreateSchema), createRecord);
 
 module.exports = router;

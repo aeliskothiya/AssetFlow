@@ -33,6 +33,14 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+function RoleRoute({ roles, children }) {
+  const { user } = useAuth();
+  if (!user || !roles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+}
+
 export function AppRouter() {
   return (
     <Routes>
@@ -45,16 +53,16 @@ export function AppRouter() {
           </ProtectedRoute>
         }
       >
-      <Route index element={<Navigate to="/dashboard" replace />} />
-      <Route path="dashboard" element={<DashboardPage />} />
-      <Route path="reports" element={<ReportsPage />} />
-      <Route path="audits" element={<AuditManagementPage />} />
-        <Route path="organization-setup" element={<OrganizationSetupPage />} />
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="reports" element={<RoleRoute roles={['Admin', 'Asset Manager', 'Department Head']}><ReportsPage /></RoleRoute>} />
+        <Route path="audits" element={<RoleRoute roles={['Admin', 'Asset Manager']}><AuditManagementPage /></RoleRoute>} />
+        <Route path="organization-setup" element={<RoleRoute roles={['Admin']}><OrganizationSetupPage /></RoleRoute>} />
         <Route path="assets" element={<AssetRegistrationPage />} />
         <Route path="allocations" element={<AssetAllocationPage />} />
         <Route path="bookings" element={<ResourceBookingPage />} />
         <Route path="maintenance" element={<MaintenanceModulePage />} />
-        <Route path="activity-logs" element={<ActivityLogsPage />} />
+        <Route path="activity-logs" element={<RoleRoute roles={['Admin']}><ActivityLogsPage /></RoleRoute>} />
         <Route path="transfers" element={<TransferRequestsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

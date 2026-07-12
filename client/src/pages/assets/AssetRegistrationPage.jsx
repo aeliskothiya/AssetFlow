@@ -4,6 +4,7 @@ import { ArrowPathIcon, PlusIcon, PencilSquareIcon, TrashIcon, CubeIcon } from '
 import { assetService } from '../../services/assetService';
 import { categoryService } from '../../services/categoryService';
 import { departmentService } from '../../services/departmentService';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { StatCard } from '../../components/ui/StatCard';
@@ -28,6 +29,7 @@ function formatDate(value) {
 const getAssetImageUrl = (asset) => asset.images?.[0]?.url || asset.photo || '';
 
 export function AssetRegistrationPage() {
+  const { user } = useAuth();
   const [assets, setAssets] = useState([]);
   const [categories, setCategories] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -161,7 +163,9 @@ export function AssetRegistrationPage() {
         </div>
         <div className="flex gap-3">
           <Button variant="secondary" onClick={loadData} disabled={loading}><ArrowPathIcon className="mr-2 h-4 w-4" />Refresh</Button>
-          <Button onClick={openCreate}><PlusIcon className="mr-2 h-4 w-4" />New Asset</Button>
+          {(user?.role === 'Admin' || user?.role === 'Asset Manager') && (
+            <Button onClick={openCreate}><PlusIcon className="mr-2 h-4 w-4" />New Asset</Button>
+          )}
         </div>
       </div>
 
@@ -204,7 +208,9 @@ export function AssetRegistrationPage() {
                 <th className="px-5 py-4">Status</th>
                 <th className="px-5 py-4">Department</th>
                 <th className="px-5 py-4">Updated</th>
-                <th className="px-5 py-4 text-right">Actions</th>
+                {(user?.role === 'Admin' || user?.role === 'Asset Manager') && (
+                  <th className="px-5 py-4 text-right">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10 bg-slate-950/30">
@@ -231,12 +237,14 @@ export function AssetRegistrationPage() {
                   <td className="px-5 py-4"><Badge tone={asset.status === 'Available' ? 'success' : asset.status === 'Under Maintenance' ? 'warning' : asset.status === 'Disposed' ? 'danger' : 'info'}>{asset.status}</Badge></td>
                   <td className="px-5 py-4 text-sm text-slate-300">{asset.department?.name || 'Unassigned'}</td>
                   <td className="px-5 py-4 text-sm text-slate-400">{formatDate(asset.updatedAt)}</td>
-                  <td className="px-5 py-4">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="secondary" onClick={() => openEdit(asset)}><PencilSquareIcon className="h-4 w-4" /></Button>
-                      <Button variant="danger" onClick={() => handleDelete(asset)}><TrashIcon className="h-4 w-4" /></Button>
-                    </div>
-                  </td>
+                  {(user?.role === 'Admin' || user?.role === 'Asset Manager') && (
+                    <td className="px-5 py-4">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="secondary" onClick={() => openEdit(asset)}><PencilSquareIcon className="h-4 w-4" /></Button>
+                        <Button variant="danger" onClick={() => handleDelete(asset)}><TrashIcon className="h-4 w-4" /></Button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

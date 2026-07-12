@@ -21,8 +21,8 @@ router.use(protect);
 
 router.get('/', validateRequest(departmentListSchema), list);
 router.get('/:departmentId', validateRequest(departmentIdSchema), details);
-router.post('/', restrictTo('Admin', 'Asset Manager'), validateRequest(departmentCreateSchema), create);
-router.patch('/:departmentId', restrictTo('Admin', 'Asset Manager'), validateRequest(departmentUpdateSchema), update);
-router.delete('/:departmentId', restrictTo('Admin', 'Asset Manager'), validateRequest(departmentIdSchema), remove);
+router.post('/', restrictTo('Admin'), validateRequest(departmentCreateSchema), create);
+router.patch('/:departmentId', restrictTo('Admin'), validateRequest(departmentUpdateSchema), update);
+router.delete('/:departmentId', restrictTo('Admin'), validateRequest(departmentIdSchema), remove);
 
 module.exports = router;

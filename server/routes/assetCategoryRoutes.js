@@ -14,8 +14,8 @@ const router = express.Router();
 router.use(protect);
 router.get('/', validateRequest(categoryListSchema), list);
 router.get('/:categoryId', validateRequest(categoryIdSchema), details);
-router.post('/', restrictTo('Admin', 'Asset Manager'), validateRequest(categoryCreateSchema), create);
-router.patch('/:categoryId', restrictTo('Admin', 'Asset Manager'), validateRequest(categoryUpdateSchema), update);
-router.delete('/:categoryId', restrictTo('Admin', 'Asset Manager'), validateRequest(categoryIdSchema), remove);
+router.post('/', restrictTo('Admin'), validateRequest(categoryCreateSchema), create);
+router.patch('/:categoryId', restrictTo('Admin'), validateRequest(categoryUpdateSchema), update);
+router.delete('/:categoryId', restrictTo('Admin'), validateRequest(categoryIdSchema), remove);
 
 module.exports = router;
