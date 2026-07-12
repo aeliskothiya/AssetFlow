@@ -1,4 +1,18 @@
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+
+const envCandidates = [path.resolve(__dirname, '.env'), path.resolve(__dirname, '..', '.env')];
+
+for (const envPath of envCandidates) {
+  if (fs.existsSync(envPath)) {
+    require('dotenv').config({ path: envPath, override: true });
+    break;
+  }
+}
+
+if (!process.env.MONGODB_URI) {
+  throw new Error('MONGODB_URI is not configured. Add it to server/.env or the workspace root .env file.');
+}
 
 const http = require('http');
 const { Server } = require('socket.io');

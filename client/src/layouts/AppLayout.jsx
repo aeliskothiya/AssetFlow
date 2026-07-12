@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Bars3Icon, BuildingOffice2Icon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, BuildingOffice2Icon, ClipboardDocumentListIcon, CubeIcon, WrenchScrewdriverIcon, CalendarDaysIcon, Squares2X2Icon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
 
 export function AppLayout() {
@@ -26,19 +26,31 @@ export function AppLayout() {
           </div>
 
           <nav className="space-y-2">
-            <NavLink
-              to="/departments"
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition ${
-                  isActive
-                    ? 'bg-cyan-400/15 text-cyan-200'
-                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                }`
-              }
-            >
-              <Bars3Icon className="h-5 w-5" />
-              Department Management
-            </NavLink>
+            {[
+              { to: '/dashboard', label: 'Dashboard', icon: ChartBarIcon },
+              { to: '/assets', label: 'Asset Registration', icon: CubeIcon },
+              { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon },
+              { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon },
+              { to: '/maintenance', label: 'Maintenance', icon: WrenchScrewdriverIcon },
+              { to: '/audits', label: 'Audits', icon: ShieldCheckIcon },
+              { to: '/reports', label: 'Reports', icon: DocumentTextIcon },
+              { to: '/organization-setup', label: 'Organization Setup', icon: ClipboardDocumentListIcon },
+            ].map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm transition ${
+                    isActive
+                      ? 'bg-cyan-400/15 text-cyan-200'
+                      : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                  }`
+                }
+              >
+                <Icon className="h-5 w-5" />
+                {label}
+              </NavLink>
+            ))}
           </nav>
         </aside>
 
