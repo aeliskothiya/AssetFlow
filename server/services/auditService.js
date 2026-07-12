@@ -113,6 +113,9 @@ const addRecord = async (cycleId, payload, userId) => {
   if (!mongoose.Types.ObjectId.isValid(payload.asset)) throw new ApiError(400, 'Invalid asset id');
   const cycle = await AuditCycle.findById(cycleId);
   if (!cycle) throw new ApiError(404, 'Audit cycle not found');
+  if (cycle.status === 'Completed' || cycle.status === 'Cancelled') {
+    throw new ApiError(400, 'Cannot add audit records to a completed or cancelled cycle');
+  }
 
   const asset = await Asset.findById(payload.asset);
   if (!asset) throw new ApiError(404, 'Asset not found');

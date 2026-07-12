@@ -216,7 +216,9 @@ export function AuditManagementPage() {
               </div>
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => handleExportPdf(selectedCycle._id)}>Export PDF</Button>
-                <Button onClick={() => setRecordModalOpen(true)}>Add Record</Button>
+                {selectedCycle.status !== 'Completed' && selectedCycle.status !== 'Cancelled' && (
+                  <Button onClick={() => setRecordModalOpen(true)}>Add Record</Button>
+                )}
               </div>
             </div>
             <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">

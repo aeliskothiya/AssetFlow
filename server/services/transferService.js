@@ -82,6 +82,13 @@ const updateTransferStatus = async (transferId, status, comments, user) => {
     if (!['Admin', 'Asset Manager', 'Department Head'].includes(user.role)) {
       throw new ApiError(403, 'Forbidden: insufficient permissions');
     }
+    if (user.role === 'Department Head') {
+      const fromDeptMatch = transfer.fromDepartment?.toString() === user.department?.toString();
+      const toDeptMatch = transfer.toDepartment?.toString() === user.department?.toString();
+      if (!fromDeptMatch && !toDeptMatch) {
+        throw new ApiError(403, 'Forbidden: you can only approve transfer requests within your department');
+      }
+    }
     transfer.approvedBy = user.id;
     transfer.approvalDate = new Date();
   } else if (status === 'Cancelled') {

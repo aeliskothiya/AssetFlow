@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, Tooltip, XAxis, YAxis, Cell, PieChart, Pie, Legend } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +10,7 @@ const piePalette = ['#4fd1c5', '#7dd3fc', '#fbbf24', '#f87171', '#34d399'];
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -70,10 +72,14 @@ export function DashboardPage() {
         </div>
         <div className="flex flex-wrap gap-3">
           {(user?.role === 'Admin' || user?.role === 'Asset Manager') && (
-            <button className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all hover:scale-105 hover:shadow-cyan-500/50">Register Asset</button>
+            <button onClick={() => navigate('/assets')} className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all hover:scale-105 hover:shadow-cyan-500/50">Register Asset</button>
           )}
-          <button className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 hover:shadow-emerald-500/50">Book Resource</button>
-          <button className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-orange-500/50">Raise Maintenance</button>
+          {user?.role === 'Admin' ? (
+            <button onClick={() => navigate('/organization-setup')} className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 hover:shadow-emerald-500/50">Organization Setup</button>
+          ) : (
+            <button onClick={() => navigate('/bookings')} className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 hover:shadow-emerald-500/50">Book Resource</button>
+          )}
+          <button onClick={() => navigate('/maintenance')} className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-orange-500/50">Raise Maintenance</button>
         </div>
       </div>
 

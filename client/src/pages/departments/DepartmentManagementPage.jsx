@@ -222,8 +222,8 @@ export function DepartmentManagementPage() {
         <StatCard label="Access Level" value={user?.role || 'Employee'} hint="Current signed-in role" />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
-        <div className="space-y-6">
+      <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           <div className="glass-panel rounded-3xl p-5 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
@@ -283,70 +283,6 @@ export function DepartmentManagementPage() {
                 Next
               </Button>
             </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="glass-panel rounded-3xl p-5 md:p-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="subtle-label">Department breakdown</p>
-                <h3 className="mt-1 text-lg font-semibold text-white">Current page activity</h3>
-              </div>
-            </div>
-            <div className="mt-6 h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.12)" />
-                  <XAxis dataKey="name" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#0d1b2a',
-                      border: '1px solid rgba(148, 163, 184, 0.16)',
-                      borderRadius: '16px',
-                    }}
-                  />
-                  <Bar dataKey="value" radius={[12, 12, 0, 0]}>
-                    <Cell fill="#4fd1c5" />
-                    <Cell fill="#f87171" />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="glass-panel rounded-3xl p-5 md:p-6">
-            <p className="subtle-label">Selected department</p>
-            {selectedDepartment ? (
-              <div className="mt-4 space-y-3">
-                <div>
-                  <h3 className="text-2xl font-semibold text-white">{selectedDepartment.name}</h3>
-                  <p className="mt-1 text-sm text-slate-400">{selectedDepartment.description || 'No description provided'}</p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Code</p>
-                    <p className="mt-2 text-sm font-medium text-white">{selectedDepartment.code}</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Status</p>
-                    <p className="mt-2 text-sm font-medium text-white">
-                      {selectedDepartment.isActive ? 'Active' : 'Inactive'}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:col-span-2">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Manager</p>
-                    <p className="mt-2 text-sm font-medium text-white">
-                      {selectedDepartment.manager?.name || 'Unassigned'}
-                    </p>
-                    <p className="text-xs text-slate-400">{selectedDepartment.manager?.email || 'No manager assigned yet'}</p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p className="mt-4 text-sm text-slate-400">Select a department to inspect its details.</p>
-            )}
           </div>
         </div>
       </div>
