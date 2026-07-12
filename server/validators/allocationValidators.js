@@ -16,6 +16,7 @@ const allocationCreateSchema = z.object({
     department: z.string().trim().min(1).nullable().optional(),
     purpose: z.string().trim().max(500).optional().default(''),
     notes: z.string().trim().max(1000).optional().default(''),
+    expectedReturnDate: z.coerce.date().nullable().optional(),
   }),
 });
 

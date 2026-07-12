@@ -30,6 +30,14 @@ export function AuthProvider({ children }) {
     bootstrap();
   }, [token]);
 
+  const signup = async (credentials) => {
+    const response = await authService.signup(credentials);
+    localStorage.setItem('assetflow_token', response.token);
+    setToken(response.token);
+    setUser(response.user);
+    return response.user;
+  };
+
   const login = async (credentials) => {
     const response = await authService.login(credentials);
     localStorage.setItem('assetflow_token', response.token);
@@ -45,7 +53,7 @@ export function AuthProvider({ children }) {
   };
 
   const value = useMemo(
-    () => ({ user, token, loading, login, logout, isAuthenticated: Boolean(token && user) }),
+    () => ({ user, token, loading, login, signup, logout, isAuthenticated: Boolean(token && user) }),
     [user, token, loading]
   );
 

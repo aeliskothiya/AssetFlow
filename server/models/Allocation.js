@@ -43,6 +43,10 @@ const allocationSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    expectedReturnDate: {
+      type: Date,
+      default: null,
+    },
     returnedAt: {
       type: Date,
       default: null,

@@ -19,12 +19,13 @@ export function AllocationFormModal({ open, assets, users, departments, onClose,
       department: '',
       purpose: '',
       notes: '',
+      expectedReturnDate: '',
     },
   });
 
   useEffect(() => {
     if (open) {
-      reset({ asset: '', allocatedTo: '', department: '', purpose: '', notes: '' });
+      reset({ asset: '', allocatedTo: '', department: '', purpose: '', notes: '', expectedReturnDate: '' });
     }
   }, [open, reset]);
 
@@ -70,6 +71,7 @@ export function AllocationFormModal({ open, assets, users, departments, onClose,
           ))}
         </Select>
         <Input label="Purpose" error={errors.purpose?.message} {...register('purpose')} />
+        <Input label="Expected Return Date" type="date" error={errors.expectedReturnDate?.message} {...register('expectedReturnDate')} />
         <div className="md:col-span-2">
           <Textarea label="Notes" error={errors.notes?.message} {...register('notes')} />
         </div>

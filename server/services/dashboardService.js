@@ -1,4 +1,5 @@
 const Asset = require('../models/Asset');
+const Allocation = require('../models/Allocation');
 const Booking = require('../models/Booking');
 const Maintenance = require('../models/Maintenance');
 const TransferRequest = require('../models/TransferRequest');
@@ -7,14 +8,22 @@ const AuditRecord = require('../models/AuditRecord');
 const Department = require('../models/Department');
 
 const getDashboardOverview = async () => {
-  const [assetsAvailable, assetsAllocated, maintenanceToday, upcomingReturns, pendingTransfers, activeBookings] = await Promise.all([
+  const now = new Date();
+
+  const [assetsAvailable, assetsAllocated, maintenanceToday, upcomingAllocations, upcomingBookings, overdueAllocations, overdueBookings, pendingTransfers, activeBookings] = await Promise.all([
     Asset.countDocuments({ status: 'Available' }),
     Asset.countDocuments({ status: 'Allocated' }),
     Maintenance.countDocuments({ status: { $in: ['Approved', 'Technician Assigned', 'In Progress'] } }),
-    Booking.countDocuments({ status: { $in: ['Upcoming', 'Ongoing'] } }),
+    Allocation.countDocuments({ status: 'Active', expectedReturnDate: { $gte: now } }),
+    Booking.countDocuments({ status: { $in: ['Upcoming', 'Ongoing'] }, endAt: { $gte: now } }),
+    Allocation.countDocuments({ status: 'Active', expectedReturnDate: { $lt: now } }),
+    Booking.countDocuments({ status: 'Ongoing', endAt: { $lt: now } }),
     TransferRequest.countDocuments({ status: 'Requested' }),
     Booking.countDocuments({ status: { $in: ['Upcoming', 'Ongoing'] } }),
   ]);
+
+  const upcomingReturns = upcomingAllocations + upcomingBookings;
+  const overdueReturns = overdueAllocations + overdueBookings;
 
   const [departmentAllocation, assetUtilization, maintenanceFrequency, bookingHeatmap, auditSummary] = await Promise.all([
     Asset.aggregate([
@@ -59,6 +68,7 @@ const getDashboardOverview = async () => {
       assetsAllocated,
       maintenanceToday,
       upcomingReturns,
+      overdueReturns,
       pendingTransfers,
       activeBookings,
     },

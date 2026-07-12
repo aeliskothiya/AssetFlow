@@ -42,6 +42,7 @@ const createAllocation = async (payload, userId) => {
     allocatedBy: userId,
     purpose: payload.purpose?.trim() || '',
     notes: payload.notes?.trim() || '',
+    expectedReturnDate: payload.expectedReturnDate || null,
   });
 
   await allocation.populate(populateAllocation);

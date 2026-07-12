@@ -9,7 +9,8 @@ import { useAuth } from '../context/AuthContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const {
     register,
@@ -17,6 +18,7 @@ export function LoginPage() {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
@@ -25,11 +27,16 @@ export function LoginPage() {
   const onSubmit = async (values) => {
     try {
       setSubmitting(true);
-      await login(values);
-      toast.success('Signed in successfully');
-      navigate('/departments', { replace: true });
+      if (isLogin) {
+        await login({ email: values.email, password: values.password });
+        toast.success('Signed in successfully');
+      } else {
+        await signup(values);
+        toast.success('Account created and signed in successfully');
+      }
+      navigate('/dashboard', { replace: true });
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Login failed');
+      toast.error(error?.response?.data?.message || (isLogin ? 'Login failed' : 'Signup failed'));
     } finally {
       setSubmitting(false);
     }
@@ -82,16 +89,27 @@ export function LoginPage() {
                 <LockClosedIcon className="h-6 w-6" />
               </div>
               <div>
-                <p className="subtle-label">Secure sign in</p>
-                <h2 className="mt-1 text-2xl font-semibold text-white">Access AssetFlow</h2>
+                <p className="subtle-label">{isLogin ? 'Secure sign in' : 'Join the platform'}</p>
+                <h2 className="mt-1 text-2xl font-semibold text-white">
+                  {isLogin ? 'Access AssetFlow' : 'Create an Account'}
+                </h2>
               </div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl">
+              {!isLogin && (
+                <Input
+                  label="Full Name"
+                  type="text"
+                  placeholder="Jane Doe"
+                  error={errors.name?.message}
+                  {...register('name', { required: !isLogin ? 'Name is required' : false })}
+                />
+              )}
               <Input
                 label="Email"
                 type="email"
-                placeholder="admin@assetflow.local"
+                placeholder={isLogin ? "admin@assetflow.local" : "name@company.com"}
                 error={errors.email?.message}
                 {...register('email', { required: 'Email is required' })}
               />
@@ -103,13 +121,20 @@ export function LoginPage() {
                 {...register('password', { required: 'Password is required' })}
               />
               <Button type="submit" className="w-full py-3" disabled={submitting}>
-                {submitting ? 'Signing in...' : 'Sign in'}
+                {submitting ? (isLogin ? 'Signing in...' : 'Signing up...') : (isLogin ? 'Sign in' : 'Sign up')}
               </Button>
             </form>
 
-            <p className="mt-6 text-sm text-slate-400">
-              Use the seeded admin account or any valid employee account created from the backend.
-            </p>
+            <div className="mt-6 text-center text-sm text-slate-400">
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="font-medium text-cyan-400 hover:text-cyan-300"
+              >
+                {isLogin ? 'Sign up' : 'Sign in'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
