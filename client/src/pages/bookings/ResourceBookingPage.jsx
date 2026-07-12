@@ -7,6 +7,7 @@ import { departmentService } from '../../services/departmentService';
 import { Button } from '../../components/ui/Button';
 import { StatCard } from '../../components/ui/StatCard';
 import { Badge } from '../../components/ui/Badge';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { BookingFormModal } from '../../components/bookings/BookingFormModal';
 
 function formatDate(value) {
@@ -91,10 +92,10 @@ export function ResourceBookingPage() {
       </div>
 
       <div className="flex items-center gap-3">
-        <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none">
+        <CustomSelect value={statusFilter} onChange={(val) => setStatusFilter(val)} size="compact">
           <option value="">All statuses</option>
           {['Upcoming', 'Ongoing', 'Completed', 'Cancelled'].map((value) => <option key={value} value={value}>{value}</option>)}
-        </select>
+        </CustomSelect>
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30">

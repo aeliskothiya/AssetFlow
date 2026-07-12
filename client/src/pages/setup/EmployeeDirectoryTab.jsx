@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { userService } from '../../services/userService';
 import { Button } from '../../components/ui/Button';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export function EmployeeDirectoryTab() {
   const [employees, setEmployees] = useState([]);
@@ -116,16 +117,15 @@ export function EmployeeDirectoryTab() {
             
             <div className="mt-6 space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-slate-300">Role</label>
-                <select
+                <CustomSelect
                   value={newRole}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/15"
+                  onChange={(val) => setNewRole(val)}
+                  label="Role"
                 >
                   <option value="Employee">Employee</option>
                   <option value="Department Head">Department Head</option>
                   <option value="Asset Manager">Asset Manager</option>
-                </select>
+                </CustomSelect>
               </div>
 
               <div className="mt-8 flex justify-end gap-3">

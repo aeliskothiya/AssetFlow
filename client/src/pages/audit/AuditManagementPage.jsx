@@ -10,6 +10,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { Badge } from '../../components/ui/Badge';
 import { AuditCycleFormModal } from '../../components/audit/AuditCycleFormModal';
 import { AuditRecordFormModal } from '../../components/audit/AuditRecordFormModal';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 function formatDate(value) {
   return new Date(value).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -162,10 +163,10 @@ export function AuditManagementPage() {
       </div>
 
       <div className="flex items-center gap-3">
-        <select value={filterStatus} onChange={(event) => setFilterStatus(event.target.value)} className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none">
+        <CustomSelect value={filterStatus} onChange={(val) => setFilterStatus(val)} size="compact">
           <option value="">All statuses</option>
           {['Planned', 'In Progress', 'Completed', 'Cancelled'].map((value) => <option key={value} value={value}>{value}</option>)}
-        </select>
+        </CustomSelect>
       </div>
 
       <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/30">

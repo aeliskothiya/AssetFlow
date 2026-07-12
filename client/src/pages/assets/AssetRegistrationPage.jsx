@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { StatCard } from '../../components/ui/StatCard';
 import { AssetFormModal } from '../../components/assets/AssetFormModal';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 const parseMedia = (text) =>
   text
@@ -179,19 +180,19 @@ export function AssetRegistrationPage() {
             placeholder="Search asset tag, serial number, name, or location..."
             className="w-full rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/15 md:max-w-2xl"
           />
-          <select
+          <CustomSelect
             value={status}
-            onChange={(event) => {
-              setStatus(event.target.value);
+            onChange={(val) => {
+              setStatus(val);
               setPagination((current) => ({ ...current, page: 1 }));
             }}
-            className="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3 text-sm text-white outline-none"
+            size="compact"
           >
             <option value="">All statuses</option>
             {['Available', 'Allocated', 'Reserved', 'Under Maintenance', 'Lost', 'Retired', 'Disposed'].map((value) => (
               <option key={value} value={value}>{value}</option>
             ))}
-          </select>
+          </CustomSelect>
         </div>
 
         <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
