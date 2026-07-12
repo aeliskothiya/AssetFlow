@@ -14,7 +14,7 @@ const populateBooking = [
 const hasOverlap = async (assetId, startAt, endAt, bookingId = null) => {
   const query = {
     asset: assetId,
-    status: { $ne: 'Cancelled' },
+    status: { $nin: ['Cancelled', 'Completed', 'Rejected'] },
     startAt: { $lt: endAt },
     endAt: { $gt: startAt },
   };
@@ -42,6 +42,9 @@ const createBooking = async (payload, user) => {
   if (!asset) throw new ApiError(404, 'Asset not found');
   if (['Allocated', 'Under Maintenance', 'Lost', 'Retired', 'Disposed'].includes(asset.status)) {
     throw new ApiError(400, 'Asset is not available for booking');
+  }
+  if (!asset.sharedBookable) {
+    throw new ApiError(400, 'This asset is not marked as a shared bookable resource');
   }
 
   const startAt = new Date(payload.startAt);
@@ -141,4 +144,42 @@ const cancelBooking = async (bookingId, user) => {
   return booking;
 };
 
-module.exports = { createBooking, listBookings, getBooking, updateBooking, cancelBooking };
+const approveBooking = async (bookingId, user) => {
+  const booking = await Booking.findById(bookingId);
+  if (!booking) throw new ApiError(404, 'Booking not found');
+  if (booking.status !== 'Requested') {
+    throw new ApiError(400, 'Only requested bookings can be approved');
+  }
+
+  const now = new Date();
+  booking.status = booking.startAt <= now ? 'Ongoing' : 'Upcoming';
+  booking.approvedBy = user.id;
+  await booking.save();
+  
+  await refreshAssetBookingStatus(booking.asset);
+  await booking.populate(populateBooking);
+  return booking;
+};
+
+const releaseBooking = async (bookingId, user) => {
+  const booking = await Booking.findById(bookingId);
+  if (!booking) throw new ApiError(404, 'Booking not found');
+  
+  if (!['Admin', 'Asset Manager'].includes(user.role) && booking.bookedBy.toString() !== user.id) {
+    throw new ApiError(403, 'Forbidden: insufficient permissions');
+  }
+  
+  if (!['Upcoming', 'Ongoing'].includes(booking.status)) {
+    throw new ApiError(400, 'Only active bookings can be released');
+  }
+
+  booking.status = 'Completed';
+  booking.endAt = new Date(); // Update end time to now since it was released early
+  await booking.save();
+  
+  await refreshAssetBookingStatus(booking.asset);
+  await booking.populate(populateBooking);
+  return booking;
+};
+
+module.exports = { createBooking, listBookings, getBooking, updateBooking, cancelBooking, approveBooking, releaseBooking };

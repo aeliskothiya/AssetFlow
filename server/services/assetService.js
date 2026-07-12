@@ -48,8 +48,22 @@ const createAsset = async (payload, userId) => {
   return asset;
 };
 
-const listAssets = async ({ page, limit, search, status, category, department }) => {
+const listAssets = async ({ page, limit, search, status, category, department, user }) => {
   const query = {};
+
+  if (user?.role === 'Department Head') {
+    query.department = user.department;
+  } else if (user?.role === 'Employee') {
+    const Allocation = require('../models/Allocation');
+    const myAllocations = await Allocation.find({ allocatedTo: user._id, status: 'Active' });
+    const myAssetIds = myAllocations.map(a => a.asset);
+    
+    query.$or = [
+      { _id: { $in: myAssetIds } },
+      { sharedBookable: true }
+    ];
+  }
+
   if (search) {
     query.$or = [
       { assetTag: { $regex: search, $options: 'i' } },
@@ -60,7 +74,7 @@ const listAssets = async ({ page, limit, search, status, category, department })
   }
   if (status) query.status = status;
   if (category) query.category = category;
-  if (department) query.department = department;
+  if (department && user?.role !== 'Department Head') query.department = department;
 
   const skip = (page - 1) * limit;
   const [items, total] = await Promise.all([

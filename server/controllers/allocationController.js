@@ -1,8 +1,11 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const { createAllocation, listAllocations, getAllocation, returnAllocation } = require('../services/allocationService');
+const { recordLog, createNotification } = require('../services/activityService');
 
 const create = asyncHandler(async (req, res) => {
   const allocation = await createAllocation(req.body, req.user.id);
+  await recordLog(req.user.id, 'Asset Allocated', { allocationId: allocation._id, assetId: allocation.asset });
+  await createNotification(allocation.allocatedTo, 'New Asset Assigned', `You have been assigned a new asset.`, '/allocations');
   res.status(201).json({ success: true, message: 'Asset allocated successfully', data: allocation });
 });
 
@@ -22,7 +25,8 @@ const details = asyncHandler(async (req, res) => {
 });
 
 const returnAsset = asyncHandler(async (req, res) => {
-  const allocation = await returnAllocation(req.params.allocationId, req.body.returnNotes);
+  const allocation = await returnAllocation(req.params.allocationId, req.body.returnNotes, req.body.condition);
+  await recordLog(req.user.id, 'Asset Returned', { allocationId: allocation._id, assetId: allocation.asset });
   res.status(200).json({ success: true, message: 'Asset returned successfully', data: allocation });
 });
 

@@ -34,7 +34,7 @@ export function TransferRequestsPage() {
         departmentService.list({ page: 1, limit: 100, includeInactive: 'false' }),
       ]);
       setTransfers(transferResponse.data || []);
-      setAssets((assetResponse.data || []).filter(asset => asset.status === 'Available'));
+      setAssets((assetResponse.data || []).filter(asset => ['Available', 'Allocated'].includes(asset.status)));
       setDepartments(departmentResponse.data || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to load transfer requests');

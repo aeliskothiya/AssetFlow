@@ -1,8 +1,10 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const { createTransfer, listTransfers, getTransfer, updateTransferStatus } = require('../services/transferService');
+const { recordLog, createNotification } = require('../services/activityService');
 
 const create = asyncHandler(async (req, res) => {
   const transfer = await createTransfer(req.body, req.user);
+  await recordLog(req.user.id, 'Transfer Requested', { transferId: transfer._id, assetId: transfer.asset });
   res.status(201).json({ success: true, message: 'Transfer request created successfully', data: transfer });
 });
 
@@ -24,6 +26,10 @@ const details = asyncHandler(async (req, res) => {
 const updateStatus = asyncHandler(async (req, res) => {
   const { status, comments } = req.body;
   const transfer = await updateTransferStatus(req.params.transferId, status, comments, req.user);
+  await recordLog(req.user.id, `Transfer ${status}`, { transferId: transfer._id, assetId: transfer.asset });
+  if (['Approved', 'Rejected', 'Completed', 'Cancelled'].includes(status)) {
+    await createNotification(transfer.requestedBy, `Transfer ${status}`, `Your transfer request has been ${status.toLowerCase()}.`, '/transfers');
+  }
   res.status(200).json({ success: true, message: `Transfer request marked as ${status}`, data: transfer });
 });
 

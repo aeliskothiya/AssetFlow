@@ -80,6 +80,9 @@ const getCycle = async (cycleId) => {
 const updateCycle = async (cycleId, payload) => {
   const cycle = await AuditCycle.findById(cycleId);
   if (!cycle) throw new ApiError(404, 'Audit cycle not found');
+  if (cycle.status === 'Completed' || cycle.status === 'Cancelled') {
+    throw new ApiError(400, 'Cannot edit a closed audit cycle');
+  }
 
   if (payload.department !== undefined) cycle.department = await validateDepartment(payload.department);
   if (payload.auditor) cycle.auditor = await validateUser(payload.auditor, 'Auditor user not found');

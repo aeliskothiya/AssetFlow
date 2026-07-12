@@ -33,8 +33,8 @@ const bookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Upcoming', 'Ongoing', 'Completed', 'Cancelled'],
-      default: 'Upcoming',
+      enum: ['Requested', 'Upcoming', 'Ongoing', 'Completed', 'Cancelled'],
+      default: 'Requested',
     },
     approvedBy: {
       type: mongoose.Schema.Types.ObjectId,

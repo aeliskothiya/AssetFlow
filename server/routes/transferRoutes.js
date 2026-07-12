@@ -14,6 +14,6 @@ router.route('/:transferId')
   .get(details);
 
 router.route('/:transferId/status')
-  .patch(restrictTo('Admin', 'Asset Manager', 'Department Head'), updateStatus);
+  .patch(updateStatus);
 
 module.exports = router;

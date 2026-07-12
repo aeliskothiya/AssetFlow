@@ -114,8 +114,15 @@ const getDashboardOverview = async (user) => {
     charts.maintenanceFrequency = maintenanceFrequency;
   }
 
+  let totalEmployees = 0;
+  if (['Admin', 'Asset Manager'].includes(user.role)) {
+    const User = require('../models/User');
+    totalEmployees = await User.countDocuments({ role: 'Employee', isActive: true });
+  }
+
   return {
     kpis: {
+      totalEmployees,
       assetsAvailable,
       assetsAllocated,
       maintenanceToday,

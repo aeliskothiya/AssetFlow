@@ -20,7 +20,7 @@ const promoteUserSchema = z.object({
     userId: z.string().min(1),
   }),
   body: z.object({
-    role: z.enum(['Admin', 'Asset Manager', 'Department Head', 'Employee']),
+    role: z.enum(['Asset Manager', 'Department Head', 'Employee']),
   }),
 });
 

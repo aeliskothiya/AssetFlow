@@ -29,9 +29,9 @@ export function AppLayout() {
           <nav className="space-y-2">
             {[
               { to: '/dashboard', label: 'Dashboard', icon: ChartBarIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
-              { to: '/assets', label: 'Asset Registration', icon: CubeIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
-              { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
-              { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
+              { to: '/assets', label: 'Asset Registration', icon: CubeIcon, roles: ['Admin', 'Asset Manager', 'Department Head'] },
+              { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon, roles: ['Admin', 'Asset Manager', 'Department Head'] },
+              { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon, roles: ['Asset Manager', 'Employee'] },
               { to: '/transfers', label: 'Transfers', icon: ArrowRightOnRectangleIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
               { to: '/maintenance', label: 'Maintenance', icon: WrenchScrewdriverIcon, roles: ['Admin', 'Asset Manager', 'Department Head', 'Employee'] },
               { to: '/audits', label: 'Audits', icon: ShieldCheckIcon, roles: ['Admin', 'Asset Manager'] },

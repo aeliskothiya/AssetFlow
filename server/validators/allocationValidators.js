@@ -26,6 +26,7 @@ const allocationReturnSchema = z.object({
   }),
   body: z.object({
     returnNotes: z.string().trim().max(1000).optional().default(''),
+    condition: z.enum(['New', 'Good', 'Fair', 'Poor', 'Damaged']).optional(),
   }),
 });
 

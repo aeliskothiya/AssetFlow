@@ -21,4 +21,12 @@ export const bookingService = {
     const response = await httpClient.delete(`/bookings/${bookingId}`);
     return response.data;
   },
+  approve: async (bookingId) => {
+    const response = await httpClient.post(`/bookings/${bookingId}/approve`);
+    return response.data;
+  },
+  release: async (bookingId) => {
+    const response = await httpClient.post(`/bookings/${bookingId}/release`);
+    return response.data;
+  },
 };

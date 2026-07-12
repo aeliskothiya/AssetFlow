@@ -84,12 +84,25 @@ const updateTransferStatus = async (transferId, status, comments, user) => {
     }
     transfer.approvedBy = user.id;
     transfer.approvalDate = new Date();
+  } else if (status === 'Cancelled') {
+    if (transfer.requestedBy.toString() !== user.id && !['Admin', 'Asset Manager', 'Department Head'].includes(user.role)) {
+      throw new ApiError(403, 'Forbidden: insufficient permissions');
+    }
   }
 
   if (status === 'Completed' && transfer.status === 'Approved') {
     const asset = await Asset.findById(transfer.asset);
     if (asset) {
+      const Allocation = require('../models/Allocation');
+      const activeAllocation = await Allocation.findOne({ asset: asset._id, status: 'Active' });
+      if (activeAllocation) {
+        activeAllocation.status = 'Returned';
+        activeAllocation.returnedAt = new Date();
+        activeAllocation.returnNotes = 'Automatically returned due to completed transfer.';
+        await activeAllocation.save();
+      }
       asset.department = transfer.toDepartment;
+      asset.status = 'Available';
       await asset.save();
     }
   }

@@ -61,6 +61,12 @@ const maintenanceSchema = new mongoose.Schema(
       maxlength: [1000, 'Resolution notes cannot exceed 1000 characters'],
       default: '',
     },
+    attachments: [
+      {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+      },
+    ],
   },
   { timestamps: true }
 );

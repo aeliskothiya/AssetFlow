@@ -10,11 +10,11 @@ router.use(protect);
 router.get('/', validateRequest(maintenanceListSchema), list);
 router.get('/:maintenanceId', validateRequest(maintenanceIdSchema), details);
 router.post('/', validateRequest(maintenanceCreateSchema), create);
-router.patch('/:maintenanceId', restrictTo('Admin', 'Asset Manager', 'Department Head'), validateRequest(maintenanceUpdateSchema), update);
+router.patch('/:maintenanceId', restrictTo('Admin', 'Asset Manager'), validateRequest(maintenanceUpdateSchema), update);
 
 router.post('/:maintenanceId/approve', restrictTo('Admin', 'Asset Manager'), approve);
 router.post('/:maintenanceId/assign', restrictTo('Admin', 'Asset Manager'), assign);
-router.post('/:maintenanceId/progress', restrictTo('Admin', 'Asset Manager', 'Technician'), progress);
-router.post('/:maintenanceId/resolve', restrictTo('Admin', 'Asset Manager', 'Technician'), resolve);
+router.post('/:maintenanceId/progress', restrictTo('Admin', 'Asset Manager'), progress);
+router.post('/:maintenanceId/resolve', restrictTo('Admin', 'Asset Manager'), resolve);
 
 module.exports = router;

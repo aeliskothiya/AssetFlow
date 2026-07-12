@@ -19,7 +19,18 @@ const createAllocation = async (payload, userId) => {
 
   const asset = await Asset.findById(payload.asset);
   if (!asset) throw new ApiError(404, 'Asset not found');
-  if (asset.status !== 'Available') throw new ApiError(400, 'Asset is not available for allocation');
+  if (asset.status !== 'Available') {
+    let message = 'Asset is not available for allocation';
+    if (asset.status === 'Allocated') {
+      const activeAllocation = await Allocation.findOne({ asset: asset._id, status: 'Active' }).populate('allocatedTo', 'name');
+      if (activeAllocation && activeAllocation.allocatedTo) {
+        message = `Asset is currently held by ${activeAllocation.allocatedTo.name}`;
+      }
+    } else {
+      message = `Asset is not available for allocation (Current status: ${asset.status})`;
+    }
+    throw new ApiError(400, message);
+  }
 
   const allocatedTo = await User.findById(payload.allocatedTo);
   if (!allocatedTo || !allocatedTo.isActive) throw new ApiError(404, 'Allocated user not found');
@@ -69,7 +80,7 @@ const getAllocation = async (allocationId) => {
   return allocation;
 };
 
-const returnAllocation = async (allocationId, returnNotes) => {
+const returnAllocation = async (allocationId, returnNotes, condition) => {
   const allocation = await Allocation.findById(allocationId);
   if (!allocation) throw new ApiError(404, 'Allocation not found');
   if (allocation.status !== 'Active') throw new ApiError(400, 'Allocation is not active');
@@ -82,6 +93,7 @@ const returnAllocation = async (allocationId, returnNotes) => {
   const asset = await Asset.findById(allocation.asset);
   if (asset) {
     asset.status = 'Available';
+    if (condition) asset.condition = condition;
     await asset.save();
   }
 

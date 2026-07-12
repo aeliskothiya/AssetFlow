@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const { createAsset, listAssets, getAsset, updateAsset, deleteAsset } = require('../services/assetService');
+const { recordLog } = require('../services/activityService');
 
 const parseMediaList = (value) => {
   if (Array.isArray(value)) {
@@ -32,6 +33,7 @@ const create = asyncHandler(async (req, res) => {
   }
   payload.documents = parseMediaList(payload.documents);
   const asset = await createAsset(payload, req.user.id);
+  await recordLog(req.user.id, 'Asset Registered', { assetId: asset._id });
   res.status(201).json({ success: true, message: 'Asset registered successfully', data: asset });
 });
 
@@ -43,6 +45,7 @@ const list = asyncHandler(async (req, res) => {
     status: req.query.status,
     category: req.query.category,
     department: req.query.department,
+    user: req.user,
   });
   res.status(200).json({ success: true, data: result.items, pagination: result.pagination });
 });
@@ -61,11 +64,13 @@ const update = asyncHandler(async (req, res) => {
   }
   payload.documents = parseMediaList(payload.documents);
   const asset = await updateAsset(req.params.assetId, payload);
+  await recordLog(req.user.id, 'Asset Updated', { assetId: asset._id });
   res.status(200).json({ success: true, message: 'Asset updated successfully', data: asset });
 });
 
 const remove = asyncHandler(async (req, res) => {
   const asset = await deleteAsset(req.params.assetId);
+  await recordLog(req.user.id, 'Asset Disposed', { assetId: asset._id });
   res.status(200).json({ success: true, message: 'Asset disposed successfully', data: asset });
 });
 

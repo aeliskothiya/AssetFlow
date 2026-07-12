@@ -9,9 +9,11 @@ const {
   listRecords,
   generateDiscrepancyPdf,
 } = require('../services/auditService');
+const { recordLog } = require('../services/activityService');
 
 const create = asyncHandler(async (req, res) => {
   const cycle = await createCycle(req.body, req.user.id);
+  await recordLog(req.user.id, 'Audit Cycle Created', { cycleId: cycle._id });
   res.status(201).json({ success: true, message: 'Audit cycle created successfully', data: cycle });
 });
 
@@ -32,6 +34,7 @@ const details = asyncHandler(async (req, res) => {
 
 const update = asyncHandler(async (req, res) => {
   const cycle = await updateCycle(req.params.cycleId, req.body);
+  await recordLog(req.user.id, 'Audit Cycle Updated', { cycleId: cycle._id });
   res.status(200).json({ success: true, message: 'Audit cycle updated successfully', data: cycle });
 });
 
@@ -42,6 +45,7 @@ const remove = asyncHandler(async (req, res) => {
 
 const createRecord = asyncHandler(async (req, res) => {
   const record = await addRecord(req.params.cycleId, req.body, req.user.id);
+  await recordLog(req.user.id, 'Audit Record Added', { cycleId: req.params.cycleId, assetId: record.asset });
   res.status(201).json({ success: true, message: 'Audit record saved successfully', data: record });
 });
 
