@@ -57,8 +57,20 @@ export function DashboardPage() {
         <StatCard label="Assets Allocated" value={kpis.assetsAllocated} hint="Currently assigned to users" />
         <StatCard label="Maintenance Active" value={kpis.maintenanceToday} hint="In progress or approved" />
         <StatCard label="Upcoming Returns" value={kpis.upcomingReturns} hint="Bookings and allocations pending return" />
+        <StatCard label="Overdue Returns" value={kpis.overdueReturns} hint="Past expected return date" intent="danger" />
         <StatCard label="Pending Transfers" value={kpis.pendingTransfers} hint="Awaiting approval" />
-        <StatCard label="Active Bookings" value={kpis.activeBookings} hint="Currently reserved resources" />
+      </div>
+
+      <div className="glass-panel flex flex-col md:flex-row items-center justify-between gap-4 rounded-3xl p-6">
+        <div>
+          <h3 className="text-lg font-semibold text-white">Quick Actions</h3>
+          <p className="text-sm text-slate-400">Common tasks you can perform right away.</p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          <button className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all hover:scale-105 hover:shadow-cyan-500/50">Register Asset</button>
+          <button className="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:scale-105 hover:shadow-emerald-500/50">Book Resource</button>
+          <button className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-orange-500/30 transition-all hover:scale-105 hover:shadow-orange-500/50">Raise Maintenance</button>
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">

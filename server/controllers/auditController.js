@@ -7,6 +7,7 @@ const {
   cancelCycle,
   addRecord,
   listRecords,
+  generateDiscrepancyPdf,
 } = require('../services/auditService');
 
 const create = asyncHandler(async (req, res) => {
@@ -49,6 +50,13 @@ const listCycleRecords = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: result.items, summary: result.summary });
 });
 
+const exportPdf = asyncHandler(async (req, res) => {
+  const pdfBuffer = await generateDiscrepancyPdf(req.params.cycleId);
+  res.header('Content-Type', 'application/pdf');
+  res.attachment(`audit-discrepancy-${req.params.cycleId}.pdf`);
+  res.send(pdfBuffer);
+});
+
 module.exports = {
   create,
   list,
@@ -57,4 +65,5 @@ module.exports = {
   remove,
   createRecord,
   listCycleRecords,
+  exportPdf,
 };

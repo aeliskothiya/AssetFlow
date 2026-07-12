@@ -142,6 +142,14 @@ export function AssetFormModal({
           Shared and bookable
         </label>
         <div className="md:col-span-2">
+          <Input
+            label="Photo (Optional)"
+            type="file"
+            accept="image/*"
+            {...register('photo')}
+          />
+        </div>
+        <div className="md:col-span-2">
           <Textarea label="Notes" error={errors.notes?.message} {...register('notes')} />
         </div>
         <div className="md:col-span-2">

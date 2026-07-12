@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { ArrowPathIcon, PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, PlusIcon, PencilSquareIcon, TrashIcon, CubeIcon } from '@heroicons/react/24/outline';
 import { assetService } from '../../services/assetService';
 import { categoryService } from '../../services/categoryService';
 import { departmentService } from '../../services/departmentService';
@@ -102,11 +102,27 @@ export function AssetRegistrationPage() {
       delete payload.imagesText;
       delete payload.documentsText;
 
+      let submitData = payload;
+      let headers = {};
+      
+      if (values.photo && values.photo.length > 0) {
+        submitData = new FormData();
+        submitData.append('photo', values.photo[0]);
+        Object.keys(payload).forEach((key) => {
+          if (key === 'images' || key === 'documents') {
+            submitData.append(key, JSON.stringify(payload[key]));
+          } else if (payload[key] !== null && payload[key] !== undefined) {
+            submitData.append(key, payload[key]);
+          }
+        });
+        headers = { 'Content-Type': 'multipart/form-data' };
+      }
+
       if (formMode === 'edit' && editingAsset) {
-        await assetService.update(editingAsset._id, payload);
+        await assetService.update(editingAsset._id, submitData);
         toast.success('Asset updated successfully');
       } else {
-        await assetService.create(payload);
+        await assetService.create(submitData);
         toast.success('Asset registered successfully');
       }
 
@@ -193,11 +209,20 @@ export function AssetRegistrationPage() {
                 <tr><td className="px-5 py-14 text-center text-sm text-slate-400" colSpan={6}>No assets found.</td></tr>
               ) : assets.map((asset) => (
                 <tr key={asset._id} className="transition hover:bg-white/5">
-                  <td className="px-5 py-4">
-                    <button type="button" onClick={() => setSelectedAsset(asset)} className="text-left font-medium text-white hover:text-cyan-200">
-                      {asset.assetTag} - {asset.name}
-                    </button>
-                    <p className="mt-1 text-sm text-slate-400">SN {asset.serialNumber}</p>
+                  <td className="px-5 py-4 flex items-center gap-3">
+                    {asset.photo ? (
+                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${asset.photo}`} alt={asset.name} className="h-10 w-10 rounded-lg object-cover bg-white/5 border border-white/10" />
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-400">
+                        <CubeIcon className="h-5 w-5" />
+                      </div>
+                    )}
+                    <div>
+                      <button type="button" onClick={() => setSelectedAsset(asset)} className="text-left font-medium text-white hover:text-cyan-200">
+                        {asset.assetTag} - {asset.name}
+                      </button>
+                      <p className="mt-1 text-sm text-slate-400">SN {asset.serialNumber}</p>
+                    </div>
                   </td>
                   <td className="px-5 py-4 text-sm text-slate-300">{asset.category?.name || 'Unassigned'}</td>
                   <td className="px-5 py-4"><Badge tone={asset.status === 'Available' ? 'success' : asset.status === 'Under Maintenance' ? 'warning' : asset.status === 'Disposed' ? 'danger' : 'info'}>{asset.status}</Badge></td>

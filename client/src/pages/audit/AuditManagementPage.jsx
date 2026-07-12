@@ -119,6 +119,27 @@ export function AuditManagementPage() {
     }
   };
 
+  const handleExportPdf = async (cycleId) => {
+    try {
+      const token = localStorage.getItem('assetflow_token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/audits/${cycleId}/export/pdf`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to export PDF');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit-cycle-${cycleId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error('Failed to export PDF');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -192,7 +213,10 @@ export function AuditManagementPage() {
                 <h3 className="mt-2 text-2xl font-semibold text-white">{selectedCycle.title}</h3>
                 <p className="mt-2 text-sm text-slate-400">{selectedCycle.description || 'No description provided'}</p>
               </div>
-              <Button onClick={() => setRecordModalOpen(true)}>Add Record</Button>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={() => handleExportPdf(selectedCycle._id)}>Export PDF</Button>
+                <Button onClick={() => setRecordModalOpen(true)}>Add Record</Button>
+              </div>
             </div>
             <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
               <table className="min-w-full divide-y divide-white/10">

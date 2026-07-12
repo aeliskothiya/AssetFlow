@@ -5,6 +5,7 @@ const {
   maintenanceReport,
   auditReport,
   bookingReport,
+  exportCsv,
 } = require('../services/reportService');
 
 const department = asyncHandler(async (_req, res) => {
@@ -32,10 +33,30 @@ const bookings = asyncHandler(async (_req, res) => {
   res.status(200).json({ success: true, data });
 });
 
+const exportData = asyncHandler(async (req, res) => {
+  const { type } = req.query;
+  let data;
+  let fields;
+  
+  if (type === 'department') {
+    data = await departmentReport();
+    fields = ['department', 'code', 'totalAssets', 'allocatedAssets', 'totalBookings', 'totalMaintenance'];
+  } else {
+    res.status(400);
+    throw new Error('Invalid export type');
+  }
+
+  const csv = exportCsv(data, fields);
+  res.header('Content-Type', 'text/csv');
+  res.attachment(`${type}-report.csv`);
+  res.send(csv);
+});
+
 module.exports = {
   department,
   assets,
   maintenance,
   audit,
   bookings,
+  exportData,
 };

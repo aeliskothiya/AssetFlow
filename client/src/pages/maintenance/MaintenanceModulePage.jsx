@@ -73,12 +73,18 @@ export function MaintenanceModulePage() {
   const handleUpdate = async (values) => {
     try {
       setSubmitting(true);
-      await maintenanceService.update(selectedItem._id, {
-        ...values,
-        technician: values.technician || null,
-        assignedBy: values.assignedBy || null,
-        scheduledAt: values.scheduledAt || null,
-      });
+      if (values.status === 'Technician Assigned' && selectedItem.status !== 'Technician Assigned') {
+        await maintenanceService.assign(selectedItem._id, { technician: values.technician, assignedBy: values.assignedBy, scheduledAt: values.scheduledAt });
+      } else if (values.status === 'Resolved' && selectedItem.status !== 'Resolved') {
+        await maintenanceService.resolve(selectedItem._id, { resolutionNotes: values.resolutionNotes });
+      } else {
+        await maintenanceService.update(selectedItem._id, {
+          ...values,
+          technician: values.technician || null,
+          assignedBy: values.assignedBy || null,
+          scheduledAt: values.scheduledAt || null,
+        });
+      }
       toast.success('Maintenance updated successfully');
       setUpdateOpen(false);
       await loadData();
@@ -91,7 +97,13 @@ export function MaintenanceModulePage() {
 
   const quickUpdate = async (item, status) => {
     try {
-      await maintenanceService.update(item._id, { status });
+      if (status === 'Approved') {
+        await maintenanceService.approve(item._id);
+      } else if (status === 'In Progress') {
+        await maintenanceService.progress(item._id);
+      } else {
+        await maintenanceService.update(item._id, { status });
+      }
       toast.success(`Maintenance marked as ${status}`);
       await loadData();
     } catch (error) {
@@ -152,9 +164,9 @@ export function MaintenanceModulePage() {
                   <div className="flex flex-wrap justify-end gap-2">
                     <Button variant="secondary" onClick={() => { setSelectedItem(item); setUpdateOpen(true); }}>Update</Button>
                     {item.status === 'Pending' ? <Button variant="secondary" onClick={() => quickUpdate(item, 'Approved')}>Approve</Button> : null}
-                    {item.status === 'Approved' ? <Button variant="secondary" onClick={() => quickUpdate(item, 'Technician Assigned')}>Assign</Button> : null}
+                    {item.status === 'Approved' ? <Button variant="secondary" onClick={() => { setSelectedItem({...item, status: 'Technician Assigned'}); setUpdateOpen(true); }}>Assign</Button> : null}
                     {item.status === 'Technician Assigned' || item.status === 'Approved' ? <Button variant="secondary" onClick={() => quickUpdate(item, 'In Progress')}>Start</Button> : null}
-                    {item.status === 'In Progress' ? <Button variant="secondary" onClick={() => quickUpdate(item, 'Resolved')}>Resolve</Button> : null}
+                    {item.status === 'In Progress' ? <Button variant="secondary" onClick={() => { setSelectedItem({...item, status: 'Resolved'}); setUpdateOpen(true); }}>Resolve</Button> : null}
                     {item.status === 'Pending' ? <Button variant="danger" onClick={() => quickUpdate(item, 'Rejected')}>Reject</Button> : null}
                   </div>
                 </td>

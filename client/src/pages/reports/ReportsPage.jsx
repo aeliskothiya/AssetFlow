@@ -178,12 +178,43 @@ export function ReportsPage() {
     );
   };
 
+  const handleExportCsv = async () => {
+    try {
+      const token = localStorage.getItem('assetflow_token');
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/reports/export/csv?type=${activeTab}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error('Failed to export CSV');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${activeTab}-report.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error('Failed to export CSV');
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <p className="subtle-label">Operational intelligence</p>
-        <h2 className="section-title mt-2">Reports</h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">Review department, asset, maintenance, audit, and booking summaries from one place.</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+          <p className="subtle-label">Operational intelligence</p>
+          <h2 className="section-title mt-2">Reports</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">Review department, asset, maintenance, audit, and booking summaries from one place.</p>
+        </div>
+        {activeTab === 'department' && (
+          <button 
+            onClick={handleExportCsv}
+            className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-2 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105"
+          >
+            Export CSV
+          </button>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-3">

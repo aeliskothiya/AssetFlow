@@ -71,10 +71,23 @@ const bookingReport = async () => {
   return { total, byStatus };
 };
 
+const { Parser } = require('json2csv');
+
+const exportCsv = (data, fields) => {
+  try {
+    const parser = new Parser({ fields });
+    return parser.parse(data);
+  } catch (err) {
+    console.error(err);
+    throw new Error('CSV generation failed');
+  }
+};
+
 module.exports = {
   departmentReport,
   assetReport,
   maintenanceReport,
   auditReport,
   bookingReport,
+  exportCsv,
 };

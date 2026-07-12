@@ -2,7 +2,11 @@ const asyncHandler = require('../middleware/asyncHandler');
 const { createAsset, listAssets, getAsset, updateAsset, deleteAsset } = require('../services/assetService');
 
 const create = asyncHandler(async (req, res) => {
-  const asset = await createAsset(req.body, req.user.id);
+  const payload = { ...req.body };
+  if (req.file) {
+    payload.photo = `/uploads/${req.file.filename}`;
+  }
+  const asset = await createAsset(payload, req.user.id);
   res.status(201).json({ success: true, message: 'Asset registered successfully', data: asset });
 });
 
@@ -24,7 +28,11 @@ const details = asyncHandler(async (req, res) => {
 });
 
 const update = asyncHandler(async (req, res) => {
-  const asset = await updateAsset(req.params.assetId, req.body);
+  const payload = { ...req.body };
+  if (req.file) {
+    payload.photo = `/uploads/${req.file.filename}`;
+  }
+  const asset = await updateAsset(req.params.assetId, payload);
   res.status(200).json({ success: true, message: 'Asset updated successfully', data: asset });
 });
 

@@ -162,6 +162,51 @@ const listRecords = async (cycleId) => {
   return { items, summary };
 };
 
+const PDFDocument = require('pdfkit');
+
+const generateDiscrepancyPdf = async (cycleId) => {
+  const cycle = await AuditCycle.findById(cycleId).populate(populateCycle);
+  if (!cycle) throw new ApiError(404, 'Audit cycle not found');
+
+  const discrepancies = await AuditRecord.find({
+    cycle: cycleId,
+    status: { $in: ['Missing', 'Damaged', 'Mismatch'] },
+  }).populate(populateRecord);
+
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 50 });
+      const buffers = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => resolve(Buffer.concat(buffers)));
+
+      doc.fontSize(20).text(`Audit Discrepancy Report`, { align: 'center' });
+      doc.moveDown();
+      doc.fontSize(12).text(`Cycle: ${cycle.title}`);
+      doc.text(`Department: ${cycle.department?.name || 'All'}`);
+      doc.text(`Auditor: ${cycle.auditor?.name || 'N/A'}`);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`);
+      doc.moveDown(2);
+
+      if (discrepancies.length === 0) {
+        doc.fontSize(14).text('No discrepancies found.', { align: 'center' });
+      } else {
+        discrepancies.forEach((record, index) => {
+          doc.fontSize(12).font('Helvetica-Bold').text(`${index + 1}. Asset: ${record.asset.name} (${record.asset.assetTag})`);
+          doc.font('Helvetica').text(`Status: ${record.status}`);
+          doc.text(`Condition Observed: ${record.conditionObserved}`);
+          doc.text(`Notes: ${record.discrepancyNotes || 'None'}`);
+          doc.moveDown();
+        });
+      }
+
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createCycle,
   listCycles,
@@ -170,4 +215,5 @@ module.exports = {
   cancelCycle,
   addRecord,
   listRecords,
+  generateDiscrepancyPdf,
 };

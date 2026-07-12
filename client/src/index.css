@@ -44,7 +44,7 @@ body {
 
 @layer components {
   .glass-panel {
-    @apply border border-white/10 bg-white/5 shadow-glow backdrop-blur-xl;
+    @apply border border-white/10 bg-white/[0.03] shadow-glow backdrop-blur-2xl transition-all duration-300 hover:bg-white/[0.05] hover:shadow-[0_8px_32px_0_rgba(79,209,197,0.15)];
   }
 
   .section-title {
@@ -53,5 +53,47 @@ body {
 
   .subtle-label {
     @apply text-xs font-semibold uppercase tracking-[0.24em] text-slate-400;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Enhancing form elements */
+  input, select, textarea {
+    @apply transition-all duration-200;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    @apply border-cyan-400/50 bg-slate-900/80 shadow-[0_0_0_2px_rgba(79,209,197,0.2)];
+  }
+  
+  /* Micro-interactions for buttons and links */
+  button, a {
+    @apply transition-all duration-200 active:scale-[0.98];
+  }
+  
+  /* Table row hover effects */
+  tbody tr {
+    @apply transition-colors duration-200;
+  }
+  tbody tr:hover {
+    @apply bg-white/[0.08];
   }
 }

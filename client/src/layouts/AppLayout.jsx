@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Bars3Icon, BuildingOffice2Icon, ClipboardDocumentListIcon, CubeIcon, WrenchScrewdriverIcon, CalendarDaysIcon, Squares2X2Icon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, BuildingOffice2Icon, ClipboardDocumentListIcon, CubeIcon, WrenchScrewdriverIcon, CalendarDaysIcon, Squares2X2Icon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon, QueueListIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext';
+import { NotificationBell } from '../components/ui/NotificationBell';
 
 export function AppLayout() {
   const { user, logout } = useAuth();
@@ -31,9 +32,11 @@ export function AppLayout() {
               { to: '/assets', label: 'Asset Registration', icon: CubeIcon },
               { to: '/allocations', label: 'Asset Allocation', icon: Squares2X2Icon },
               { to: '/bookings', label: 'Resource Booking', icon: CalendarDaysIcon },
+              { to: '/transfers', label: 'Transfers', icon: ArrowRightOnRectangleIcon },
               { to: '/maintenance', label: 'Maintenance', icon: WrenchScrewdriverIcon },
               { to: '/audits', label: 'Audits', icon: ShieldCheckIcon },
               { to: '/reports', label: 'Reports', icon: DocumentTextIcon },
+              { to: '/activity-logs', label: 'Activity Logs', icon: QueueListIcon },
               { to: '/organization-setup', label: 'Organization Setup', icon: ClipboardDocumentListIcon },
             ].map(({ to, label, icon: Icon }) => (
               <NavLink
@@ -61,6 +64,7 @@ export function AppLayout() {
               <h1 className="text-base font-medium text-white">{user?.name || 'Unknown user'}</h1>
             </div>
             <div className="flex items-center gap-3">
+              <NotificationBell />
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-300">
                 {user?.role || 'Employee'}
               </span>

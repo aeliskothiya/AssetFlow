@@ -27,4 +27,24 @@ const update = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: 'Maintenance updated successfully', data: maintenance });
 });
 
-module.exports = { create, list, details, update };
+const approve = asyncHandler(async (req, res) => {
+  const maintenance = await updateMaintenance(req.params.maintenanceId, { status: 'Approved' }, req.user);
+  res.status(200).json({ success: true, message: 'Maintenance approved', data: maintenance });
+});
+
+const assign = asyncHandler(async (req, res) => {
+  const maintenance = await updateMaintenance(req.params.maintenanceId, { status: 'Technician Assigned', technician: req.body.technician, assignedBy: req.user.id }, req.user);
+  res.status(200).json({ success: true, message: 'Technician assigned', data: maintenance });
+});
+
+const progress = asyncHandler(async (req, res) => {
+  const maintenance = await updateMaintenance(req.params.maintenanceId, { status: 'In Progress' }, req.user);
+  res.status(200).json({ success: true, message: 'Maintenance in progress', data: maintenance });
+});
+
+const resolve = asyncHandler(async (req, res) => {
+  const maintenance = await updateMaintenance(req.params.maintenanceId, { status: 'Resolved', resolutionNotes: req.body.resolutionNotes }, req.user);
+  res.status(200).json({ success: true, message: 'Maintenance resolved', data: maintenance });
+});
+
+module.exports = { create, list, details, update, approve, assign, progress, resolve };

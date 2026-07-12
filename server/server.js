@@ -18,7 +18,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const app = require('./app');
 const connectDB = require('./config/db');
-const registerSocketHandlers = require('./socket');
+const { registerSocketHandlers } = require('./socket');
 
 const PORT = process.env.PORT || 5000;
 

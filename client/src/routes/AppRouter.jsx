@@ -10,6 +10,8 @@ import { AssetAllocationPage } from '../pages/allocations/AssetAllocationPage';
 import { ResourceBookingPage } from '../pages/bookings/ResourceBookingPage';
 import { MaintenanceModulePage } from '../pages/maintenance/MaintenanceModulePage';
 import { OrganizationSetupPage } from '../pages/setup/OrganizationSetupPage';
+import { ActivityLogsPage } from '../pages/ActivityLogsPage';
+import { TransferRequestsPage } from '../pages/transfers/TransferRequestsPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -52,6 +54,8 @@ export function AppRouter() {
         <Route path="allocations" element={<AssetAllocationPage />} />
         <Route path="bookings" element={<ResourceBookingPage />} />
         <Route path="maintenance" element={<MaintenanceModulePage />} />
+        <Route path="activity-logs" element={<ActivityLogsPage />} />
+        <Route path="transfers" element={<TransferRequestsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
+const path = require('path');
 
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
@@ -16,6 +17,8 @@ const maintenanceRoutes = require('./routes/maintenanceRoutes');
 const auditRoutes = require('./routes/auditRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const activityRoutes = require('./routes/activityRoutes');
+const transferRoutes = require('./routes/transferRoutes');
 
 const app = express();
 
@@ -29,6 +32,8 @@ app.use(
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -56,6 +61,8 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/audits', auditRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/transfers', transferRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
