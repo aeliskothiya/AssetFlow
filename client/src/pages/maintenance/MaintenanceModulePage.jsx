@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ArrowPathIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../context/AuthContext';
 import { maintenanceService } from '../../services/maintenanceService';
 import { assetService } from '../../services/assetService';
 import { userService } from '../../services/userService';
@@ -17,6 +18,7 @@ function formatDate(value) {
 }
 
 export function MaintenanceModulePage() {
+  const { user } = useAuth();
   const [maintenanceItems, setMaintenanceItems] = useState([]);
   const [assets, setAssets] = useState([]);
   const [users, setUsers] = useState([]);
@@ -31,15 +33,26 @@ export function MaintenanceModulePage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [maintenanceResponse, assetResponse, userResponse, departmentResponse] = await Promise.all([
+      const shouldLoadUsers = ['Admin', 'Asset Manager', 'Department Head'].includes(user?.role);
+      const requests = [
         maintenanceService.list({ page: 1, limit: 50, status: statusFilter }),
         assetService.list({ page: 1, limit: 100 }),
-        userService.list({ page: 1, limit: 100 }),
-        departmentService.list({ page: 1, limit: 100, includeInactive: 'false' }),
-      ]);
+      ];
+
+      if (shouldLoadUsers) {
+        requests.push(userService.list({ page: 1, limit: 100 }));
+      }
+
+      requests.push(departmentService.list({ page: 1, limit: 100, includeInactive: 'false' }));
+
+      const results = await Promise.all(requests);
+      const maintenanceResponse = results[0];
+      const assetResponse = results[1];
+      const userResponse = shouldLoadUsers ? results[2] : null;
+      const departmentResponse = shouldLoadUsers ? results[3] : results[2];
       setMaintenanceItems(maintenanceResponse.data || []);
       setAssets((assetResponse.data || []).filter((asset) => !['Retired', 'Disposed'].includes(asset.status)));
-      setUsers(userResponse.data || []);
+      setUsers(userResponse?.data || []);
       setDepartments(departmentResponse.data || []);
       setSelectedItem((current) => current || maintenanceResponse.data?.[0] || null);
     } catch (error) {
@@ -51,7 +64,7 @@ export function MaintenanceModulePage() {
 
   useEffect(() => {
     loadData();
-  }, [statusFilter]);
+  }, [statusFilter, user?.role]);
 
   const pendingCount = useMemo(() => maintenanceItems.filter((item) => item.status === 'Pending').length, [maintenanceItems]);
   const activeCount = useMemo(() => maintenanceItems.filter((item) => ['Approved', 'Technician Assigned', 'In Progress'].includes(item.status)).length, [maintenanceItems]);

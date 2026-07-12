@@ -25,6 +25,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Uploaded assets
+server/uploads/
+
 # OS / editor files
 .DS_Store
 Thumbs.db

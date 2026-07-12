@@ -31,7 +31,7 @@ export function ResourceBookingPage() {
         departmentService.list({ page: 1, limit: 100, includeInactive: 'false' }),
       ]);
       setBookings(bookingResponse.data || []);
-      setAssets((assetResponse.data || []).filter((asset) => asset.sharedBookable));
+      setAssets((assetResponse.data || []).filter((asset) => !['Allocated', 'Under Maintenance', 'Lost', 'Retired', 'Disposed'].includes(asset.status)));
       setDepartments(departmentResponse.data || []);
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to load bookings');

@@ -24,8 +24,13 @@ const transferRequestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Requested', 'Approved', 'Rejected', 'Completed'],
+      enum: ['Requested', 'Approved', 'Rejected', 'Completed', 'Cancelled'],
       default: 'Requested',
+    },
+    priority: {
+      type: String,
+      enum: ['Low', 'Medium', 'High'],
+      default: 'Medium',
     },
     reason: {
       type: String,
@@ -38,6 +43,21 @@ const transferRequestSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, 'Notes cannot exceed 1000 characters'],
       default: '',
+    },
+    comments: {
+      type: String,
+      trim: true,
+      maxlength: [1000, 'Comments cannot exceed 1000 characters'],
+      default: '',
+    },
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    approvalDate: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

@@ -24,6 +24,8 @@ function formatDate(value) {
   return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
+const getAssetImageUrl = (asset) => asset.images?.[0]?.url || asset.photo || '';
+
 export function AssetRegistrationPage() {
   const [assets, setAssets] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -210,8 +212,8 @@ export function AssetRegistrationPage() {
               ) : assets.map((asset) => (
                 <tr key={asset._id} className="transition hover:bg-white/5">
                   <td className="px-5 py-4 flex items-center gap-3">
-                    {asset.photo ? (
-                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${asset.photo}`} alt={asset.name} className="h-10 w-10 rounded-lg object-cover bg-white/5 border border-white/10" />
+                    {getAssetImageUrl(asset) ? (
+                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${getAssetImageUrl(asset)}`} alt={asset.name} className="h-10 w-10 rounded-lg object-cover bg-white/5 border border-white/10" />
                     ) : (
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-400">
                         <CubeIcon className="h-5 w-5" />

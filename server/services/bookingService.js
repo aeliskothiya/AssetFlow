@@ -40,7 +40,6 @@ const createBooking = async (payload, user) => {
 
   const asset = await Asset.findById(payload.asset);
   if (!asset) throw new ApiError(404, 'Asset not found');
-  if (!asset.sharedBookable) throw new ApiError(400, 'Asset is not available for booking');
   if (['Allocated', 'Under Maintenance', 'Lost', 'Retired', 'Disposed'].includes(asset.status)) {
     throw new ApiError(400, 'Asset is not available for booking');
   }
