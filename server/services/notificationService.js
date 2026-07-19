@@ -1,5 +1,4 @@
 const Notification = require('../models/Notification');
-const { sendNotificationToUser } = require('../socket');
 
 const listNotifications = async ({ userId, page, limit, unreadOnly }) => {
   const query = { user: userId };

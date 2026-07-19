@@ -36,7 +36,7 @@ const recordLog = async (userId, action, payload = {}) => {
       try {
         const asset = await Asset.findById(entityId);
         details = asset ? `Asset: ${asset.assetTag} (${asset.name})` : `Asset ID: ${entityId}`;
-      } catch (err) {
+      } catch {
         details = `Asset ID: ${entityId}`;
       }
     } else if (entityType) {

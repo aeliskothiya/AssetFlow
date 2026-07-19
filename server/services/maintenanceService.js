@@ -51,7 +51,7 @@ const createMaintenance = async (payload, user) => {
   return maintenance;
 };
 
-const listMaintenance = async ({ page, limit, search, status, user }) => {
+const listMaintenance = async ({ page, limit, _search, status, user }) => {
   const query = {};
   if (status) query.status = status;
   if (!['Admin', 'Asset Manager', 'Department Head'].includes(user.role)) query.requestedBy = user.id;

@@ -22,7 +22,7 @@ const protect = asyncHandler(async (req, _res, next) => {
   let decoded;
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (_error) {
+  } catch {
     throw new ApiError(401, 'Not authorized, token invalid');
   }
 

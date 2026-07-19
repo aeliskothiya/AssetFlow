@@ -14,7 +14,7 @@ const parseMediaList = (value) => {
   try {
     const parsed = JSON.parse(value);
     return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
+  } catch {
     return [];
   }
 };

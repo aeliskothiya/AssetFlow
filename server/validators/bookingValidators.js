@@ -30,7 +30,6 @@ const bookingUpdateSchema = z.object({
     notes: z.string().trim().max(1000).optional().default(''),
     purpose: z.string().trim().max(500).optional(),
     status: z.enum(['Upcoming', 'Ongoing', 'Completed', 'Cancelled']).optional(),
-    notes: z.string().trim().max(1000).optional(),
   }),
 });
 

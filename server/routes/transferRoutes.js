@@ -1,6 +1,6 @@
 const express = require('express');
 const { create, list, details, updateStatus } = require('../controllers/transferController');
-const { protect, restrictTo } = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
