@@ -1,0 +1,63 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-test:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js LTS
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          # Caching strategy requires paths to the lock files for both client and server
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      # 3 & 4. Install client dependencies
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+
+      # 3 & 5. Install server dependencies
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci
+
+      # 6. Run backend lint
+      - name: Run backend lint
+        working-directory: ./server
+        run: npm run lint
+
+      # 7. Build React application
+      - name: Build React application
+        working-directory: ./client
+        run: npm run build
+        env:
+          # A dummy URL must be provided since the Dockerfile ARG expects it during build
+          VITE_API_BASE_URL: http://localhost:5000/api
+
+      # 8. Build frontend Docker image
+      - name: Build frontend Docker image
+        run: docker build -t assetflow-frontend ./client
+
+      # 9. Build backend Docker image
+      - name: Build backend Docker image
+        run: docker build -t assetflow-backend ./server
