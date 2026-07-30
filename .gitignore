@@ -7,17 +7,20 @@ server/node_modules/
 client/dist/
 server/dist/
 coverage/
+
+# SSH Key
 assets.pem
+
 # Environment files
 .env
 .env.*
-.env.example
+!.env.example
 client/.env
 client/.env.*
-client/.env.example
+!client/.env.example
 server/.env
 server/.env.*
-server/.env.example
+!server/.env.example
 
 # Logs
 npm-debug.log*
@@ -28,7 +31,7 @@ pnpm-debug.log*
 # Uploaded assets
 server/uploads/
 
-# OS / editor files
+# OS / Editor files
 .DS_Store
 Thumbs.db
 .vscode/
