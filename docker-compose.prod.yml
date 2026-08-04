@@ -1,18 +1,23 @@
 services:
   backend:
-    build:
-      context: ./server
+    image: lucifer7383/assetflow-backend:latest
     container_name: assetflow_backend_prod
+
     env_file:
       - ./server/.env
+
     environment:
       NODE_ENV: production
       PORT: 5000
+
     volumes:
       - uploads:/app/uploads
+
     networks:
       - assetflow-network
+
     restart: unless-stopped
+
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:5000/api/health"]
       interval: 30s
@@ -20,17 +25,19 @@ services:
       retries: 3
 
   nginx:
-    build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
+    image: lucifer7383/assetflow-nginx:latest
     container_name: assetflow_nginx_prod
+
     ports:
       - "80:80"
+
     depends_on:
       backend:
         condition: service_healthy
+
     networks:
       - assetflow-network
+
     restart: unless-stopped
 
 networks:
